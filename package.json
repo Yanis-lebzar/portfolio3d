@@ -9,11 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/core": "^7.20.12",
     "@next/font": "13.1.2",
+    "@react-spring/three": "^9.6.1",
+    "@react-spring/web": "^9.6.1",
+    "@react-three/drei": "^9.53.0",
+    "@react-three/fiber": "^8.10.0",
+    "@react-three/postprocessing": "^2.7.0",
+    "@splinetool/loader": "^0.9.188",
+    "@splinetool/r3f-spline": "^1.0.2",
+    "@types/three": "^0.148.0",
+    "babel-plugin-glsl": "^1.0.0",
+    "babel-plugin-macros": "^3.1.0",
     "eslint": "8.32.0",
     "eslint-config-next": "13.1.2",
+    "framer-motion": "^8.5.5",
+    "framer-motion-3d": "^9.0.0",
+    "gsap": "^3.11.4",
+    "leva": "0.9",
     "next": "13.1.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "splitting": "^1.0.6",
+    "three": "^0.148.0"
   }
 }
