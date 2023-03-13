@@ -4,18 +4,66 @@
   width: 100%;
   height: 100vh;
 }
+.wavyMain {
+  z-index: 10;
+  display: flex;
+  position: relative;
+  overflow-x: scroll;
+  /* scroll-snap-type: x mandatory; */
 
+  height: 100vh;
+  width: 100%;
+  /* overflow-x: scroll; */
+}
+.sectionWavy {
+  /* scroll-snap-align: center;
+  scroll-behavior: smooth; */
+
+  display: flex;
+  z-index: 10;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  min-width: 100%;
+  position: relative;
+  font-family: "Cabin", sans-serif;
+  color: #ffeded;
+  text-transform: uppercase;
+  font-size: 4vmin;
+}
+.sectionWavy .h1 {
+}
+
+.mainUi {
+  position: absolute;
+  top: 0;
+  /* background-color: #0000002b; */
+  width: 100%;
+  height: 100vh;
+}
+.canvasSpacebar {
+  z-index: 100;
+}
 .canvasSpacebar,
 .text {
+  z-index: 10;
   display: flex;
   flex-direction: column;
   position: absolute;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.168);
   justify-content: center;
   align-items: center;
+}
+.h1 {
+  color: #fff;
+}
+
+.wavyPlane {
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
 }
 
 .text {

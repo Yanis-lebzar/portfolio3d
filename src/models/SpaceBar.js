@@ -7,7 +7,7 @@ import { motion, MotionCanvas, LayoutCamera } from "framer-motion-3d";
 
 import useSpline from "@splinetool/r3f-spline";
 import { Float, OrbitControls, OrthographicCamera } from "@react-three/drei";
-import { useFrame, extend } from "@react-three/fiber";
+import { useFrame, extend, Canvas } from "@react-three/fiber";
 import { useRef } from "react";
 import { inverseLerp } from "three/src/math/MathUtils.js";
 
@@ -17,9 +17,15 @@ export default function SpaceBar({ ...props }) {
   const { position, color } = useSpring({
     position: [0, props.spacePressed ? -90 : 0, 0],
     color: props.spacePressed ? "black" : "white",
-    config: { duration: 70 },
+    config: {},
   });
-
+  const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+  window.addEventListener("resize", () => {
+    sizes.width = window.innerWidth;
+  });
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
 
@@ -30,6 +36,7 @@ export default function SpaceBar({ ...props }) {
   const { nodes, materials } = useSpline(
     "https://prod.spline.design/guQre2TCcnMDvqLK/scene.splinecode"
   );
+
   return (
     <>
       <color args={[""]} />
@@ -47,7 +54,7 @@ export default function SpaceBar({ ...props }) {
           },
         }}
         animate={{
-          y: props.gradientZoom ? -180 : 0,
+          y: props.gradientZoom ? -200 : 0,
           transition: {
             y: {
               duration: 1.5,
@@ -55,18 +62,16 @@ export default function SpaceBar({ ...props }) {
             },
           },
         }}
-        transition={{
-          scale: {
-            duration: 2,
-            delay: 0.5,
-          },
-        }}
+        position={[0, 0, 0]}
       >
-        <group
+        <motion.group
           name="spaceBar"
-          position={[0, -200, 10000]}
+          position={[0, -250, 0]}
           rotation={[0.8, 0, 0]} //0.8
-          scale={0.18}
+          animate={{
+            scale: props.gradientZoom ? 0.15 : 0.16,
+            transition: { duration: 2 },
+          }}
           ref={spaceBarRef}
         >
           <animated.group ref={key} name="Group" position={position}>
@@ -109,8 +114,15 @@ export default function SpaceBar({ ...props }) {
             rotation={[-Math.PI / 2, 0, 0]}
             scale={1}
           />
-        </group>
-
+        </motion.group>
+        {/* <OrthographicCamera
+          makeDefault={true}
+          fov={80}
+          far={100000}
+          near={-100000}
+          zoom={1.25}
+          position={(0, 0, 0)}
+        /> */}
         <hemisphereLight
           name="Default Ambient Light"
           intensity={1.35}

@@ -19,6 +19,7 @@
     "@splinetool/loader": "^0.9.188",
     "@splinetool/r3f-spline": "^1.0.2",
     "@types/three": "^0.148.0",
+    "@use-gesture/react": "^10.2.24",
     "babel-plugin-glsl": "^1.0.0",
     "babel-plugin-macros": "^3.1.0",
     "eslint": "8.32.0",
@@ -30,6 +31,7 @@
     "next": "13.1.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-scroll": "^1.8.9",
     "splitting": "^1.0.6",
     "three": "^0.148.0"
   }

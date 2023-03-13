@@ -26,6 +26,7 @@ export const ShaderGradient = shaderMaterial(
   uniform float uTime;
 uniform vec2 pixels;
 uniform vec3 uColor[4];
+uniform bool gradientZoom;
   varying vec3 vColor;
   varying vec3 vPosition;
   varying vec2 vUv;

@@ -3,7 +3,11 @@ import styles from "@/styles/Home.module.css";
 import { Canvas, useFrame } from "@react-three/fiber";
 import SpaceBar from "../models/SpaceBar.js";
 import { Suspense, useState, useLayoutEffect, useRef, useEffect } from "react";
-import { OrbitControls, OrthographicCamera } from "@react-three/drei";
+import {
+  OrbitControls,
+  OrthographicCamera,
+  PerspectiveCamera,
+} from "@react-three/drei";
 import { animated, useSpring } from "@react-spring/web";
 import GradientPlane from "@/models/GradientPlane.js";
 import { useControls } from "leva";
@@ -17,13 +21,21 @@ import {
 } from "framer-motion-3d";
 
 import { Router, useRouter } from "next/router";
+import WavyPlane from "@/components/WavyPlane.js";
+import ResponsiveOrthographicCamera from "@/components/ResponsiveOrthographicCamera.js";
+import LeftKey from "@/models/LeftKey.js";
+import RightKey from "@/models/RightKey.js";
+import KeysScene from "@/components/keysScene.js";
 
 export default function Home() {
   const [spacePressed, setSpacePressed] = useState(false);
+  const [leftArrowPressed, setLeftArrowPressed] = useState(false);
+  const [rightArrowPressed, setRightArrowPressed] = useState(false);
+
   const [intervalTime, setIntervalTime] = useState(1000);
   const [gradientZoom, setGradientZoom] = useState(false);
   const router = useRouter();
-  let color = gradientZoom ? "#00ffff" : "#00ff00";
+  let color = gradientZoom ? "#00ffff" : "#88d2f1";
 
   const [wordSplited, setSplitedWord] = useState([]);
   const words = [
@@ -33,6 +45,12 @@ export default function Home() {
     "こんにちは",
     "안녕하세요",
   ];
+
+  const { bgColor } = useSpring({
+    from: { bgColor: "black" },
+    to: { bgColor: gradientZoom ? "#000000cd" : "#0000002b" },
+    config: { duration: 1000 },
+  });
   // console.log(intervalTime);
   // making the text animation start quickly on mount and then take the normal intervalTime
   useEffect(() => {
@@ -60,20 +78,39 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [intervalTime]);
 
-  // useEffect(() => {
-  //   console.log(wordSplited);
-  // }, [wordSplited]);
-
   function handleKeyDown(event) {
     if (event.key === " ") {
       setSpacePressed(true);
       setGradientZoom(!gradientZoom);
+      let homeUrl = "/";
+      let galleryUrl = "project-gallery";
+      if (window.location.href.includes("project-gallery")) {
+        history.pushState({}, "", "/");
+      } else {
+        history.pushState({}, "", galleryUrl);
+      }
+    }
+
+    if (event.key === "ArrowLeft") {
+      setLeftArrowPressed(true);
+    }
+    if (event.key === "ArrowRight") {
+      setRightArrowPressed(true);
     }
   }
 
   function handleKeyUp(event) {
     if (event.key === " ") {
       setSpacePressed(false);
+    }
+
+    if (event.key === "ArrowLeft") {
+      setLeftArrowPressed(false);
+      console.log("désappuyé lef");
+    }
+
+    if (event.key === "ArrowRight") {
+      setRightArrowPressed(false);
     }
   }
 
@@ -82,6 +119,9 @@ export default function Home() {
     zoom: { value: 1, step: 0.1 },
     position: { value: [0, 0, 0], step: 10.0 },
   });
+
+  // console.log(gradientZoom);
+
   return (
     <>
       <Head>
@@ -91,6 +131,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
       </Head>
+
+      {/* Background gradient */}
+
       <animated.main className="main">
         <Suspense fallback={null}>
           <Canvas
@@ -120,81 +163,80 @@ export default function Home() {
               rotation={[0, 0.25, 0]}
             />
 
-            {/* <Float
-              speed={1} // Animation speed, defaults to 1
-              rotationIntensity={0.03} // XYZ rotation intensity, defaults to 1
-              floatIntensity={0.01} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1
-              floatingRange={[-0.1, 0.1]} // Range of y-axis values the object will float within, defaults to [-0.1,0.1]
-            > */}
-            {/* <SpaceBar spacePressed={spacePressed} /> */}
-            {/* </Float> */}
-
             <OrbitControls />
-            {/* <LeftKey /> */}
           </Canvas>
-          {/* <div className="text">
-            <h1>Mon espace</h1>
-          </div> */}
         </Suspense>
       </animated.main>
+
+      {/* UI above gradient */}
+
       <animated.div
-        style={{ outline: "none" }}
+        className="mainUi"
+        style={{ outline: "none", backgroundColor: bgColor }}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
         tabIndex={0}
       >
+        {/* Space bar */}
         <animated.div className="canvasSpacebar">
           <AnimatePresence>
             <motion.div
-              style={{ width: "100%", height: "100%" }}
+              style={{ width: "100%", height: "100vh", zIndex: 100 }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 3, duration: 1 }}
             >
-              <Canvas
-                shadows
-                flat
-                linear
-                gl={{ antialias: true }}
-                camera={{
-                  fov: 85,
-                }}
-              >
-                <OrbitControls />
+              <Canvas shadows flat linear gl={{ antialias: true }}>
+                <KeysScene
+                  gradientZoom={gradientZoom}
+                  leftArrowPressed={leftArrowPressed}
+                  rightArrowPressed={rightArrowPressed}
+                  spacePressed={spacePressed}
+                />
+                {/* <OrbitControls />
+                <OrthographicCamera
+                  ref={cameraSpaceBarRef}
+                  makeDefault={true}
+                  fov={80}
+                  far={100000}
+                  near={-100000}
+                  zoom={1.25}
+                  position={(0, 0, 0)}
+                />
+
+                {gradientZoom ? (
+                  <motion3d.group
+                    initial={{
+                      y: -30,
+                      opacity: 0,
+                      transition: {
+                        duration: 1.5,
+                      },
+                    }}
+                    animate={{
+                      y: 0,
+                      opacity: 1,
+                      transition: {
+                        duration: 1.5,
+                        delay: 2.5,
+                      },
+                    }}
+                  >
+                    <LeftKey leftArrowPressed={leftArrowPressed} />
+                    <RightKey rightArrowPressed={rightArrowPressed} />{" "}
+                  </motion3d.group>
+                ) : null}
 
                 <SpaceBar
                   gradientZoom={gradientZoom}
                   spacePressed={spacePressed}
-                />
-                <OrthographicCamera
-                  name="1"
-                  makeDefault={true}
-                  zoom={1.25}
-                  far={100000}
-                  near={-100000}
-                  position={0}
-                  rotation={0}
-                />
-                {/* <motion3d.directionalLight
-                name="Directional Light"
-                castShadow
-                intensity={1.21}
-                shadow-mapSize-width={1024}
-                shadow-mapSize-height={1024}
-                shadow-camera-near={-10000}
-                shadow-camera-far={100000}
-                shadow-camera-left={-1210.774}
-                shadow-camera-right={1210.774}
-                shadow-camera-top={1210.774}
-                shadow-camera-bottom={-1210.774}
-                color="#fefefe"
-                position={[154.86, 1304.58, -2219.09]}
-                rotation={[0, 0.25, 0]}
-              /> */}
+                /> */}
               </Canvas>
             </motion.div>
           </AnimatePresence>
         </animated.div>
+
+        {/* Texts */}
 
         <div className="text">
           <AnimatePresence>
@@ -235,6 +277,20 @@ export default function Home() {
             ) : null}
           </AnimatePresence>
         </div>
+
+        <AnimatePresence>
+          {gradientZoom ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: gradientZoom ? 1 : 0 }}
+              exit={{ opacity: 0, transition: { delay: 0 } }}
+              transition={{ delay: 1.5, duration: 1.5 }}
+              className="wavyPlane"
+            >
+              <WavyPlane />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </animated.div>
     </>
   );

@@ -9,10 +9,10 @@ import { animated, useSpring } from "@react-spring/three";
 import { useFrame } from "@react-three/fiber";
 import { motion, MotionCanvas, LayoutCamera } from "framer-motion-3d";
 
-export default function LeftKey({ ...props }) {
-  const leftKeyRef = useRef();
-  const { position, color } = useSpring({
-    position: [-206.33, props.leftArrowPressed ? -180 : -90, -94.86],
+export default function RightKey({ ...props }) {
+  const rightKeyRef = useRef();
+  const { position } = useSpring({
+    position: [-206.33, props.rightArrowPressed ? -180 : -90, -94.86],
     config: { duration: 150 },
   });
   const sizes = {
@@ -25,9 +25,9 @@ export default function LeftKey({ ...props }) {
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
 
-    leftKeyRef.current.rotation.x = Math.PI / 2 / 1.55 + Math.cos(t / 2) / 20;
-    leftKeyRef.current.rotation.y = Math.cos(t / 2) / 20;
-    leftKeyRef.current.rotation.z = (-0.5 + Math.sin(t / 2)) / 30;
+    rightKeyRef.current.rotation.x = Math.PI / 2 / 1.55 + Math.cos(t / 2) / 20;
+    rightKeyRef.current.rotation.y = Math.cos(t / 2) / 20;
+    rightKeyRef.current.rotation.z = (-0.5 + Math.sin(t / 2)) / 30;
   });
   const { nodes, materials } = useSpline(
     "https://prod.spline.design/wZQv3oiyEY81u1XT/scene.splinecode"
@@ -38,11 +38,34 @@ export default function LeftKey({ ...props }) {
       <motion.group
         {...props}
         dispose={null}
+        initial={{
+          y: -30,
+          transition: {
+            y: {
+              duration: 1.5,
+              delay: 0.5,
+            },
+          },
+        }}
+        animate={{
+          y: props.gradientZoom ? -200 : 0,
+          transition: {
+            y: {
+              duration: 1.5,
+              delay: 0,
+            },
+          },
+        }}
         scale={0.17}
-        position={[-700, 0, 0]}
-        rotation={[-0.15, 0, 0]} //0.8
+        position={[700, 0, 0]}
+        rotation={[-1.15, Math.PI * 2, Math.PI]} //0.8
       >
-        <group ref={leftKeyRef} name="leftKey" position={[0, 0, 0]}>
+        <group
+          ref={rightKeyRef}
+          name="leftKey"
+          rotation={[0, 0, 0]}
+          position={[0, 0, 0]}
+        >
           <group name="base" position={[-209, 0, -101]}>
             <mesh
               name="whiteBase"
